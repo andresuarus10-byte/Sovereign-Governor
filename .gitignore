@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+mynode/
+node_state/
+*.log
+.DS_Store
