@@ -35,6 +35,20 @@ are ratified deliberately — receipts before crowns.
    explicit and self-healing. Kernel of the braid's "power loss
    mid-receipt" note — the software half of it.
 
+4. **Threat-model table in the repo (not just prose).**
+   Promote SCOPE.md's prose into a maintained table so gaps are explicit and
+   trackable. Columns: threat | current protection | known gap | planned patch.
+   Seed rows to fill honestly (an empty "current protection" cell is a valid,
+   useful admission):
+       - compromised local model
+       - malicious prompt / injection
+       - LAN exposure of the model endpoint
+       - ledger tampering
+       - config / alpha-table edit by a local user
+       - power loss mid-write (see item 3)
+       - accidental authority grant
+       - quiet-hours bypass attempt
+
 ## Already roadmapped (review validated the design; no change)
 - **Memory discipline** — observations-vs-facts, confidence values,
   provenance ("who suggested this, when"), periodic self-audits. This

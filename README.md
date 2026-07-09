@@ -12,6 +12,26 @@ unchanged.
 is written to disk, nothing reaches past your LAN, and relevance never grants
 authority.
 
+## How it flows
+```
+  you / your app
+        |
+        v
+   +-------------+   ledger write happens BEFORE the model call
+   |  GOVERNOR   |-->  (receipt on disk, hash-chained)
+   +-------------+
+    |    |     |
+    |    |     +-->  ask  -> local LLM (llama.cpp / Ollama)   [LAN only]
+    |    |
+    |    +--------->  act  -> authority table -> grant / HOLD / deny
+    |                        (decision only; nothing actuates in v0.1)
+    |
+    +--------------> every path recorded in the append-only ledger
+
+  There is NO direct model -> tools path. The model never acts; it asks
+  the Governor, and the Governor answers to the ledger.
+```
+
 ## What it does
 - Sits in front of any local OpenAI-compatible server (llama.cpp, Ollama, vLLM…).
 - Writes every exchange to a hash-chained, append-only ledger *before* the model
@@ -22,6 +42,24 @@ authority.
   permissions collapse to announce-only.
 - Never phones the cloud: the source scans *itself* for forbidden remote-endpoint
   tokens (stored reversed so the scanner doesn't flag its own list). 32 self-tests.
+
+## DO NOT use this for
+Read this first. The Governor is a governance/audit layer, **not a security
+boundary**:
+- **Not a sandbox or jail** - it does not contain a compromised model or stop
+  code from doing what the OS already allows.
+- **Not a firewall** - "LAN-only" is enforced in this process's own calls, not
+  system-wide.
+- **Not protection against someone who can edit the files** - the hash chain
+  makes tampering *visible*, not impossible.
+- **Not for broker/trading automation** - there is no order/execution code here,
+  by design and by self-scan, and none should be added.
+- **Not for child-safety-critical automation.**
+- **Not for unattended physical devices** - v0.1 actuates nothing on purpose.
+- **Not a vault for cloud secrets** - it holds none and calls no cloud.
+
+This is v0.1, "first light" - a design to discuss and audit, not a safety
+guarantee. Longer version in **SCOPE.md**.
 
 `braidkit` is the little sibling — manifest · verify · ferry: deterministic file
 bundles with stable SHA-256 anchors, for moving work between machines (or between
